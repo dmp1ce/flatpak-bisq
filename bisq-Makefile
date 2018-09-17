@@ -1,0 +1,44 @@
+MINECRAFT_JAR=Minecraft.jar
+# /app/extra is where the minecraft jar file will be downloaded
+INSTALLED_MINECRAFT_JAR=/app/extra/$(MINECRAFT_JAR)
+INSTALLED_MINECRAFT=/app/bin/minecraft
+INSTALLED_DESKTOP=/app/share/applications/com.mojang.Minecraft.desktop
+INSTALLED_ICON=/app/share/icons/hicolor/256x256/apps/com.mojang.Minecraft.png
+INSTALLED_APPDATA=/app/share/appdata/com.mojang.Minecraft.appdata.xml
+
+define MINECRAFT_CONTENT :=
+#!/bin/sh
+java -jar $(INSTALLED_MINECRAFT_JAR)
+endef
+
+#$(INSTALLED_MINECRAFT):
+#	mkdir -p $(@D)
+#	$(file > $(@),$(MINECRAFT_CONTENT))
+#
+#$(INSTALLED_DESKTOP):
+#	mkdir -p $(@D)
+#	cp $(@F) $@
+#
+#$(INSTALLED_ICON):
+#	mkdir -p $(@D)
+#	cp $(@F) $@
+#
+#$(INSTALLED_APPDATA):
+#	mkdir -p $(@D)
+#	cp $(@F) $@
+
+build:
+	gradle build
+
+#install:
+#	ls -alh
+#	pwd
+#	# Install executable.
+#  install -d "${pkgdir}/opt/bisq"
+#  cp -r "${srcdir}/${pkgname}/desktop/build/app/"* "${pkgdir}/opt/bisq"
+#  install -d "${pkgdir}/usr/bin"
+#  ln -s "/opt/bisq/bin/desktop" "${pkgdir}/usr/bin/bisq-desktop"
+#
+#  # Install desktop launcher.
+#  install -Dm644 bisq.desktop "${pkgdir}/usr/share/applications/bisq.desktop"
+#  install -Dm644 "${srcdir}/${pkgname}/desktop/package/linux/icon.png" "${pkgdir}/usr/share/pixmaps/bisq.png"

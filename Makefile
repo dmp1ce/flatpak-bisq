@@ -1,34 +1,33 @@
 NULL=
 
-ID=com.mojang.Minecraft
-BUNDLE=minecraft.flatpak
+ID=org.bisq.Bisq
+BUNDLE=bisq.flatpak
 
 RUNTIME=org.gnome.Platform
 SDK=org.gnome.Sdk
-VERSION=3.20
+SDK_VERSION=3.28
+OPENJDK_EXTENSION=org.freedesktop.Sdk.Extension.openjdk10
+OPENJDK_VERSION=1.6
 
-SDK_REPO=gnome
-SDK_LOCATION=https://sdk.gnome.org/repo/
-SDK_KEY=gnome-sdk.gpg
-SDK_KEY_URL=https://sdk.gnome.org/keys/gnome-sdk.gpg
+SDK_REPO=flathub
+SDK_LOCATION=https://flathub.org/repo/flathub.flatpakrepo
 
 USER=--user
 MANIFEST=$(ID).json
 BUILD_DIR=tmp
 REPO=repo
-INSTALL_REPO=minecraft-repo
+INSTALL_REPO=bisq-repo
 
 BUILD_DEPS= \
 	$(MANIFEST) \
 	jre-Makefile \
-	minecraft-Makefile \
+	bisq-Makefile \
 	$(NULL)
 
 define GITIGNORE_CONTENT :=
 .gitignore
 .flatpak-builder
 $(BUNDLE)
-$(SDK_KEY)
 $(BUILD_DIR)
 $(REPO)
 endef
@@ -38,21 +37,22 @@ all: .gitignore $(BUNDLE)
 .gitignore:
 	$(file > $(@),$(GITIGNORE_CONTENT))
 
-$(SDK_KEY):
-	wget $(SDK_KEY_URL)
-
-install-sdk-repo: $(SDK_KEY)
-	flatpak $(USER) remote-add --gpg-import=$(SDK_KEY) $(SDK_REPO) $(SDK_LOCATION)
+install-sdk-repo:
+	flatpak $(USER) remote-add $(SDK_REPO) $(SDK_LOCATION)
 
 # Depends on 'install-sdk-repo'
 install-runtime:
-	flatpak $(USER) install $(SDK_REPO) $(RUNTIME) $(VERSION) || flatpak $(USER) update $(RUNTIME) $(VERSION)
+	flatpak $(USER) install flathub $(RUNTIME) $(SDK_VERSION) || flatpak $(USER) update $(RUNTIME) $(SDK_VERSION)
 
 # Depends on 'install-sdk-repo'
 install-sdk:
-	flatpak $(USER) install $(SDK_REPO) $(SDK) $(VERSION) || flatpak $(USER) update $(SDK) $(VERSION)
+	flatpak $(USER) install flathub $(SDK) $(SDK_VERSION) || flatpak $(USER) update $(SDK) $(SDK_VERSION)
 
-build: $(BUILD_DEPS) install-runtime install-sdk
+# Depends on 'install-sdk-repo'
+install-openjdk-extension:
+	flatpak $(USER) install flathub $(OPENJDK_EXTENSION) $(OPENJDK_VERSION) || flatpak $(USER) update $(OPENJDK_EXTENSION) $(OPENJDK_VERSION)
+
+build: $(BUILD_DEPS) install-runtime install-sdk install-openjdk-extension
 	flatpak-builder --force-clean --repo=$(REPO) $(BUILD_DIR) $(MANIFEST)
 
 $(BUNDLE): build
@@ -74,6 +74,6 @@ clean-build:
 	rm -Rf $(BUILD_DIR)
 
 clean:
-	rm -Rf .gitignore $(BUNDLE) $(BUILD_DIR) $(REPO) $(SDK_KEY)
+	rm -Rf .gitignore $(BUNDLE) $(BUILD_DIR) $(REPO)
 
 .PHONY: all install-sdk-repo install-runtime install-sdk build prepare-install install uninstall run clean-build clean .gitignore

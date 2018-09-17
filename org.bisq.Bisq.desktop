@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=Minecraft
-Icon=com.mojang.Minecraft
-Exec=minecraft
+Name=Bisq
+Icon=org.bisq.Bisq
+Exec=bisq-desktop
 Categories=Game;
 StartupWMClass=net-minecraft-bootstrap-Bootstrap

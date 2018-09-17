@@ -1,15 +1,15 @@
-#flatpak-minecraft
+#flatpak-bisq
 
-A small tool to automatially bundle Minecraft as a flatpak.
+A small tool to automatially bundle Bisq as a flatpak.
 
 ## Usage
 
-You will need the `gnome` repository, if you don't already have it you can install it with:
+You will need the `flathub` repository, if you don't already have it you can install it with:
 ```
 make install-sdk-repo
 ```
 
-To build `minecraft.flatpak`:
+To build `bisq.flatpak`:
 ```
 make
 ```

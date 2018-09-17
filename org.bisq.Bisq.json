@@ -1,0 +1,70 @@
+{
+  /* GTK+ is needed by JavaFX. */
+  "app-id": "org.bisq.Bisq",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "3.28",
+  "sdk": "org.gnome.Sdk",
+  "sdk-extensions": [
+      "org.freedesktop.Sdk.Extension.openjdk10"
+  ],
+  "command": "bisq-desktop",
+  "build-options" : {
+      "env": {
+          "JAVA_HOME": "/app/jre"
+      }
+  },
+  "finish-args": [
+      "--persist=.local/share/Bisq",
+      /* X11 access */
+      "--socket=x11",
+      /* OpenGL access */
+      "--device=dri",
+      /* PulseAudio access */
+      "--socket=pulseaudio",
+      /* Network access */
+      "--share=network"
+  ],
+  "modules": [
+      {
+          "name": "openjdk",
+          "buildsystem": "simple",
+          "build-commands": [
+              "/usr/lib/sdk/openjdk10/install.sh"
+          ]
+      },
+      {
+          "name": "gradle",
+          "sources": [
+              {
+                  "type": "archive",
+                  "url": "https://services.gradle.org/distributions/gradle-4.10.1-bin.zip",
+                  "sha256": "e53ce3a01cf016b5d294eef20977ad4e3c13e761ac1e475f1ffad4c6141a92bd"
+              }
+          ],
+          "buildsystem": "simple",
+          "build-commands": [
+              "mkdir -p /app/bin",
+              "mkdir -p /app/share/gradle",
+              "cp -a * /app/share/gradle/",
+              "ls -alh /app/share/gradle",
+              "ln -s /app/share/gradle/bin/gradle /app/bin/gradle"
+          ]
+      },
+      {
+          "name": "bisq",
+          "no-autogen": true,
+          "sources" : [
+              {
+                  "type": "git",
+                  "url": "https://github.com/bisq-network/bisq-desktop.git",
+                  "tag": "v0.8.0"
+              },
+              {
+                  "type": "file",
+                  "path": "bisq-Makefile",
+                  "dest-filename": "Makefile"
+              }
+          ]
+      }
+  ]
+}
